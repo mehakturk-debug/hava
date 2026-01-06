@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>Hava Durumu OS v42.0 - Kesin Çözüm</title>
+    <title>Hava Durumu OS v42.0 - Landscape Optimized</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -15,48 +15,57 @@
         }
 
         body, html { 
-            height: 100%; margin: 0; overflow: hidden; 
+            min-height: 100vh; margin: 0; 
             font-family: 'Plus Jakarta Sans', sans-serif; 
             color: var(--text-color); 
-            transition: background 1.5s cubic-bezier(0.4, 0, 0.2, 1), color 0.8s ease; 
+            transition: background 1.5s cubic-bezier(0.4, 0, 0.2, 1), color 0.8s ease;
+            overflow-x: hidden;
+            overflow-y: auto;
         }
         
         .glass { 
             background: var(--card-bg); 
-            backdrop-filter: blur(50px); 
-            border: 2px solid var(--border-color); 
-            border-radius: 2.5rem; 
-            transition: all 0.5s ease; 
+            backdrop-filter: blur(40px); 
+            border: 1px solid var(--border-color); 
+            border-radius: 1.5rem; 
+            transition: all 0.4s ease; 
             position: relative; 
-            overflow: hidden;
         }
 
-        /* Güneş Yörüngesi */
-        .solar-container { position: relative; width: 100%; height: 130px; margin-top: 15px; display: flex; justify-content: center; align-items: flex-end; }
+        /* Güneş Yörüngesi Ölçeklendirme */
+        .solar-container { position: relative; width: 100%; height: 100px; margin-top: 10px; display: flex; justify-content: center; align-items: flex-end; }
         .solar-track { 
-            position: absolute; width: 220px; height: 110px; 
-            border-top-left-radius: 110px; border-top-right-radius: 110px; 
+            position: absolute; width: 180px; height: 90px; 
+            border-top-left-radius: 90px; border-top-right-radius: 90px; 
             border: 1px dashed var(--border-color); border-bottom: none; bottom: 0;
         }
         #dynamic-brand { 
-            position: absolute; bottom: 12px; font-size: 2.2rem; font-weight: 800; 
+            position: absolute; bottom: 8px; font-size: 1.5rem; font-weight: 800; 
             text-transform: uppercase; z-index: 10; width: 100%; text-align: center; 
-            letter-spacing: -0.05em; font-style: italic;
+            letter-spacing: -0.05em; font-style: italic; opacity: 0.8;
         }
         .sun-icon { 
-            position: absolute; width: 32px; height: 32px; 
+            position: absolute; width: 24px; height: 24px; 
             background: #fbbf24; border-radius: 50%; 
-            box-shadow: 0 0 40px #fbbf24; transition: 1.5s; z-index: 15; 
+            box-shadow: 0 0 30px #fbbf24; transition: 1.5s; z-index: 15; 
         }
 
-        /* Grid Sistemi */
+        /* Ana Grid Sistemi */
         .dashboard-grid { 
             display: grid; 
-            grid-template-columns: repeat(6, 1fr); 
-            grid-template-rows: auto auto 1fr; 
-            gap: 1.5rem; 
-            height: 100vh; padding: 2rem; box-sizing: border-box; 
-            position: relative; z-index: 10; 
+            grid-template-columns: repeat(12, 1fr); 
+            gap: 1rem; 
+            padding: 1.5rem; 
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        /* Yatay Mod (Landscape) Optimizasyonu */
+        @media (orientation: landscape) {
+            .stat-value { font-size: 1.5rem !important; }
+            .stat-label { font-size: 0.6rem !important; }
+            .solar-track { width: 160px; height: 80px; border-top-left-radius: 80px; border-top-right-radius: 80px; }
+            .glass { padding: 1rem !important; }
         }
 
         .weather-layer { position: fixed; inset: 0; pointer-events: none; z-index: 1; }
@@ -66,9 +75,8 @@
         .custom-scroll::-webkit-scrollbar { height: 4px; }
         .custom-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
         
-        /* Tipografi */
-        .stat-label { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.15em; opacity: 0.6; margin-bottom: 0.75rem; }
-        .stat-value { font-size: 2.5rem; font-weight: 800; letter-spacing: -0.03em; }
+        .stat-label { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.5; margin-bottom: 0.5rem; }
+        .stat-value { font-size: 2rem; font-weight: 800; letter-spacing: -0.03em; }
     </style>
 </head>
 <body>
@@ -77,65 +85,65 @@
 
 <div class="dashboard-grid" id="main-grid">
     
-    <div class="glass p-6 col-span-4 flex justify-between items-center">
-        <div class="flex items-center gap-6">
-            <h1 class="text-5xl font-black tracking-tighter uppercase leading-none" id="city-title">...</h1>
-            <p id="date-display" class="text-xs font-bold tracking-widest opacity-40 mt-1 uppercase"></p>
+    <div class="glass p-6 col-span-12 lg:col-span-8 flex flex-wrap justify-between items-center gap-4">
+        <div class="flex items-center gap-4">
+            <h1 class="text-3xl lg:text-5xl font-black tracking-tighter uppercase leading-none" id="city-title">...</h1>
+            <p id="date-display" class="text-[10px] font-bold tracking-widest opacity-40 uppercase"></p>
         </div>
-        <div class="flex gap-4">
-            <input type="text" id="city-input" onkeypress="if(event.key === 'Enter') search()" placeholder="Konum..." class="bg-black/5 border border-white/10 rounded-2xl px-6 py-2 text-sm outline-none w-64 focus:border-white/30 text-inherit backdrop-blur-md">
-            <button onclick="search()" class="bg-blue-600 text-white px-8 py-2 rounded-2xl text-xs font-black uppercase hover:bg-blue-500 transition-all">ARA</button>
+        <div class="flex gap-2 flex-grow lg:flex-grow-0">
+            <input type="text" id="city-input" onkeypress="if(event.key === 'Enter') search()" placeholder="Konum..." class="bg-black/10 border border-white/10 rounded-xl px-4 py-2 text-sm outline-none flex-grow lg:w-48 focus:border-white/30 text-inherit backdrop-blur-md">
+            <button onclick="search()" class="bg-blue-600 text-white px-6 py-2 rounded-xl text-xs font-black uppercase hover:bg-blue-500 transition-all">ARA</button>
         </div>
     </div>
 
-    <div class="glass p-6 col-span-2 flex items-center gap-6">
-        <div class="text-5xl" id="outfit-icon">🧥</div>
+    <div class="glass p-4 col-span-12 lg:col-span-4 flex items-center gap-4">
+        <div class="text-4xl" id="outfit-icon">🧥</div>
         <div>
-            <p class="stat-label !mb-1">Giyim Rehberi</p>
-            <p id="style-advice" class="text-base font-light italic opacity-90 leading-tight"></p>
+            <p class="stat-label !mb-0 text-[10px]">Giyim Rehberi</p>
+            <p id="style-advice" class="text-sm font-medium italic opacity-90 leading-tight"></p>
         </div>
     </div>
 
-    <div class="glass p-8 col-span-3">
-        <p class="stat-label">Güneş Döngüsü</p>
+    <div class="glass p-4 col-span-12 md:col-span-4 flex flex-col justify-center">
+        <p class="stat-label text-center">Güneş Döngüsü</p>
         <div class="solar-container">
             <div class="solar-track"></div>
             <div id="dynamic-brand">...</div>
             <div id="sun" class="sun-icon"></div>
         </div>
-        <div class="flex justify-between mt-6 text-sm font-black opacity-60">
+        <div class="flex justify-between mt-4 text-[10px] font-black opacity-60 px-4">
             <span id="sunrise-time">--:--</span>
             <span id="sunset-time">--:--</span>
         </div>
     </div>
 
-    <div class="col-span-3 grid grid-cols-2 gap-4">
-        <div class="glass p-6 flex flex-col justify-center items-center">
-            <p class="stat-label">Rüzgar Hızı</p>
+    <div class="col-span-12 md:col-span-8 grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <div class="glass p-4 flex flex-col justify-center items-center">
+            <p class="stat-label">Rüzgar</p>
             <p id="v-wind" class="stat-value">--</p>
         </div>
-        <div class="glass p-6 flex flex-col justify-center items-center">
+        <div class="glass p-4 flex flex-col justify-center items-center">
             <p class="stat-label">Nem</p>
             <p id="v-hum" class="stat-value">--</p>
         </div>
-        <div class="glass p-6 flex flex-col justify-center items-center">
+        <div class="glass p-4 flex flex-col justify-center items-center">
             <p class="stat-label">UV</p>
             <p id="v-uv" class="stat-value">--</p>
         </div>
-        <div class="glass p-6 flex flex-col justify-center items-center">
+        <div class="glass p-4 flex flex-col justify-center items-center">
             <p class="stat-label">Sıcaklık</p>
             <p class="stat-value" id="main-temp">--°</p>
         </div>
     </div>
 
-    <div class="glass p-8 col-span-3">
-        <p class="stat-label mb-6">Saatlik Tahmin</p>
-        <div class="flex gap-10 overflow-x-auto pb-4 custom-scroll" id="hour-flow"></div>
+    <div class="glass p-6 col-span-12 lg:col-span-6">
+        <p class="stat-label mb-4">Saatlik Tahmin</p>
+        <div class="flex gap-4 overflow-x-auto pb-2 custom-scroll" id="hour-flow"></div>
     </div>
 
-    <div class="glass p-8 col-span-3">
-        <p class="stat-label mb-6">7 Günlük Analiz</p>
-        <div id="week-list" class="space-y-4"></div>
+    <div class="glass p-6 col-span-12 lg:col-span-6">
+        <p class="stat-label mb-4">7 Günlük Analiz</p>
+        <div id="week-list" class="space-y-3"></div>
     </div>
 
 </div>
@@ -158,7 +166,7 @@
         document.getElementById('city-title').innerText = data.location.name;
         document.getElementById('dynamic-brand').innerText = data.location.name;
         document.getElementById('main-temp').innerText = temp + "°";
-        document.getElementById('v-wind').innerText = cur.wind_kph + " km/s";
+        document.getElementById('v-wind').innerText = Math.round(cur.wind_kph) + " km/s";
         document.getElementById('v-hum').innerText = "%" + cur.humidity;
         document.getElementById('v-uv').innerText = cur.uv;
         
@@ -169,21 +177,19 @@
         updateDynamicStyles(temp, cur.condition.text);
         updateSolar(astro.sunrise, astro.sunset);
 
-        // HAFTALIK VERİ - İkon Düzeltmesi (https eklendi)
         document.getElementById('week-list').innerHTML = data.forecast.forecastday.map(d => `
-            <div class="flex justify-between items-center">
-                <span class="text-sm font-black uppercase opacity-40 w-16">${new Date(d.date).toLocaleDateString('tr-TR', {weekday: 'short'})}</span>
+            <div class="flex justify-between items-center text-sm">
+                <span class="font-black uppercase opacity-40 w-12">${new Date(d.date).toLocaleDateString('tr-TR', {weekday: 'short'})}</span>
                 <div class="flex-grow h-[1px] bg-current opacity-10 mx-4"></div>
-                <img src="https:${d.day.condition.icon}" class="w-10">
-                <span class="text-xl font-bold ml-6 w-12 text-right">${Math.round(d.day.maxtemp_c)}°</span>
+                <img src="https:${d.day.condition.icon}" class="w-8">
+                <span class="font-bold ml-4 w-10 text-right">${Math.round(d.day.maxtemp_c)}°</span>
             </div>`).join('');
 
-        // SAATLİK VERİ - İkon Düzeltmesi (https eklendi)
         document.getElementById('hour-flow').innerHTML = data.forecast.forecastday[0].hour.filter((_,i) => i%3===0).map(h => `
-            <div class="flex flex-col items-center min-w-[90px] p-6 rounded-[3rem] bg-black/5 border border-white/5">
-                <span class="text-xs font-black opacity-30 mb-4">${h.time.split(' ')[1]}</span>
-                <img src="https:${h.condition.icon}" class="w-12 mb-4">
-                <span class="text-2xl font-bold">${Math.round(h.temp_c)}°</span>
+            <div class="flex flex-col items-center min-w-[70px] p-4 rounded-2xl bg-black/5 border border-white/5">
+                <span class="text-[10px] font-black opacity-30 mb-2">${h.time.split(' ')[1]}</span>
+                <img src="https:${h.condition.icon}" class="w-8 mb-2">
+                <span class="text-lg font-bold">${Math.round(h.temp_c)}°</span>
             </div>`).join('');
 
         const advice = document.getElementById('style-advice');
@@ -200,19 +206,19 @@
         
         let bg = "#020617", card = "rgba(255,255,255,0.03)", text = "#ffffff", border = "rgba(255,255,255,0.08)", pColor = "#fff";
 
-        if (temp < 0) { // EKSİ: BEYAZ ARKA PLAN / SİYAH KARTLAR
+        if (temp < 0) { 
             bg = "#ffffff"; card = "rgba(0,0,0,0.95)"; text = "#000000"; border = "rgba(0,0,0,0.2)"; pColor = "#000";
-            createParticles(layer, 60, 'snow', pColor);
+            createParticles(layer, 40, 'snow', pColor);
         } 
-        else if (temp >= 17 && temp <= 25) { // 17-25: SARI ARKA PLAN / MAVİ KARTLAR
+        else if (temp >= 17 && temp <= 25) { 
             bg = "#fbbf24"; card = "rgba(30,58,138,0.95)"; text = "#000000"; border = "rgba(30,58,138,0.4)";
         }
-        else if (temp > 25) { // 25+: KIRMIZI ARKA PLAN / YEŞİL KARTLAR
+        else if (temp > 25) { 
             bg = "#ff0000"; card = "rgba(34,197,94,0.95)"; text = "#ffffff"; border = "rgba(255,255,255,0.3)";
         }
-        else { // NORMAL
+        else { 
             bg = "linear-gradient(180deg, #020617 0%, #0c4a6e 100%)";
-            if(cond.toLowerCase().includes("yağmur")) createParticles(layer, 80, 'rain', "#fff");
+            if(cond.toLowerCase().includes("yağmur")) createParticles(layer, 50, 'rain', "#fff");
         }
 
         body.style.background = bg;
@@ -220,14 +226,6 @@
         root.style.setProperty('--text-color', text);
         root.style.setProperty('--border-color', border);
         body.style.color = text;
-
-        // Kart içi metinlerin kontrastını dinamik ayarla
-        document.querySelectorAll('.glass').forEach(g => {
-            if (temp > 25) g.style.color = "#ffffff";
-            else if (temp >= 17 && temp <= 25) g.style.color = "#ffffff";
-            else if (temp < 0) g.style.color = "#ffffff";
-            else g.style.color = "#ffffff";
-        });
     }
 
     function createParticles(layer, count, mode, color) {
@@ -235,7 +233,7 @@
             let p = document.createElement('div');
             p.className = 'particle'; p.style.background = color;
             p.style.left = Math.random() * 100 + '%'; p.style.top = '-50px';
-            p.style.width = mode === 'rain' ? '1px' : '4px'; p.style.height = mode === 'rain' ? '30px' : '4px';
+            p.style.width = mode === 'rain' ? '1px' : '4px'; p.style.height = mode === 'rain' ? '20px' : '4px';
             p.style.animationDuration = (Math.random() * 1 + (mode==='rain'?0.5:2.5)) + 's';
             layer.appendChild(p);
         }
@@ -254,8 +252,8 @@
         const sun = document.getElementById('sun');
         if(pct > 0 && pct < 100) {
             const angle = (pct * 180 / 100) * (Math.PI / 180);
-            const x = 110 - 110 * Math.cos(angle); const y = 110 - 110 * Math.sin(angle);
-            sun.style.left = `calc(50% - 110px + ${x}px)`; sun.style.top = `${y}px`; sun.style.opacity = "1";
+            const x = 90 - 90 * Math.cos(angle); const y = 90 - 90 * Math.sin(angle);
+            sun.style.left = `calc(50% - 90px + ${x}px)`; sun.style.top = `${y}px`; sun.style.opacity = "1";
         } else { sun.style.opacity = "0"; }
     }
 
